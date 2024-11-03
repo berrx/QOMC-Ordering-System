@@ -3,11 +3,11 @@
 namespace App\Admin\Controllers;
 
 use App\Models\CouponCode;
-use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Show;
-use Encore\Admin\Layout\Content;
+use Dcat\Admin\Controllers\AdminController;
+use Dcat\Admin\Form;
+use Dcat\Admin\Grid;
+use Dcat\Admin\Show;
+use Dcat\Admin\Layout\Content;
 
 class CouponCodesController extends AdminController
 {

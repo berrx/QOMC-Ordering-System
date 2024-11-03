@@ -3,58 +3,125 @@
 return [
 
     /*
-     * 站点标题
-     */
-    'name' => 'Laravel Shop',
+    |--------------------------------------------------------------------------
+    | dcat-admin name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the name of dcat-admin, This setting is displayed on the
+    | login page.
+    |
+    */
+    'name' => 'Dcat Admin',
 
     /*
-     * 页面顶部 Logo
-     */
-    'logo' => '<b>Laravel</b> Shop',
+    |--------------------------------------------------------------------------
+    | dcat-admin logo
+    |--------------------------------------------------------------------------
+    |
+    | The logo of all admin pages. You can also set it as an image by using a
+    | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
+    |
+    */
+    'logo' => '<img src="/vendors/dcat-admin/images/logo.png" width="35"> &nbsp;Dcat Admin',
 
     /*
-     * 页面顶部小 Logo
-     */
-    'logo-mini' => '<b>LS</b>',
+    |--------------------------------------------------------------------------
+    | dcat-admin mini logo
+    |--------------------------------------------------------------------------
+    |
+    | The logo of all admin pages when the sidebar menu is collapsed. You can
+    | also set it as an image by using a `img` tag, eg
+    | '<img src="http://logo-url" alt="Admin logo">'.
+    |
+    */
+    'logo-mini' => '<img src="/vendors/dcat-admin/images/logo.png">',
 
     /*
-     * Laravel-Admin 启动文件路径
+     |--------------------------------------------------------------------------
+     | User default avatar
+     |--------------------------------------------------------------------------
+     |
+     | Set a default avatar for newly created users.
+     |
      */
-    'bootstrap' => app_path('Admin/bootstrap.php'),
+    'default_avatar' => '@admin/images/default-avatar.jpg',
 
     /*
-     * 路由配置
-     */
+    |--------------------------------------------------------------------------
+    | dcat-admin route settings
+    |--------------------------------------------------------------------------
+    |
+    | The routing configuration of the admin page, including the path prefix,
+    | the controller namespace, and the default middleware. If you want to
+    | access through the root path, just set the prefix to empty string.
+    |
+    */
     'route' => [
-        // 路由前缀
+
         'prefix' => env('ADMIN_ROUTE_PREFIX', 'admin'),
-        // 控制器命名空间前缀
+
         'namespace' => 'App\\Admin\\Controllers',
-        // 默认中间件列表
+
         'middleware' => ['web', 'admin'],
     ],
 
     /*
-     * Laravel-Admin 的安装目录
-     */
+    |--------------------------------------------------------------------------
+    | dcat-admin install directory
+    |--------------------------------------------------------------------------
+    |
+    | The installation directory of the controller and routing configuration
+    | files of the administration page. The default is `app/Admin`, which must
+    | be set before running `artisan admin::install` to take effect.
+    |
+    */
     'directory' => app_path('Admin'),
 
     /*
-     * Laravel-Admin 页面标题
-     */
-    'title' => 'Laravel Shop 管理后台',
+    |--------------------------------------------------------------------------
+    | dcat-admin html title
+    |--------------------------------------------------------------------------
+    |
+    | Html title for all pages.
+    |
+    */
+    'title' => 'Admin',
 
     /*
-     * 是否使用 https
-     */
-    'secure' => env('ADMIN_HTTPS', false),
+    |--------------------------------------------------------------------------
+    | Assets hostname
+    |--------------------------------------------------------------------------
+    |
+   */
+    'assets_server' => env('ADMIN_ASSETS_SERVER'),
 
     /*
-     * Laravel-Admin 用户认证设置
-     */
+    |--------------------------------------------------------------------------
+    | Access via `https`
+    |--------------------------------------------------------------------------
+    |
+    | If your page is going to be accessed via https, set it to `true`.
+    |
+    */
+    'https' => env('ADMIN_HTTPS', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | dcat-admin auth setting
+    |--------------------------------------------------------------------------
+    |
+    | Authentication settings for all admin pages. Include an authentication
+    | guard and a user provider setting of authentication driver.
+    |
+    | You can specify a controller for `login` `logout` and other auth routes.
+    |
+    */
     'auth' => [
+        'enable' => true,
 
         'controller' => App\Admin\Controllers\AuthController::class,
+
+        'guard' => 'admin',
 
         'guards' => [
             'admin' => [
@@ -66,31 +133,97 @@ return [
         'providers' => [
             'admin' => [
                 'driver' => 'eloquent',
-                'model'  => Encore\Admin\Auth\Database\Administrator::class,
+                'model'  => Dcat\Admin\Models\Administrator::class,
             ],
         ],
 
-        // 是否展示 保持登录 选项
+        // Add "remember me" to login form
         'remember' => true,
 
-        // 登录页面 URL
-        'redirect_to' => 'auth/login',
-
-        // 无需用户认证即可访问的地址
-        'excepts' => [
+        // All method to path like: auth/users/*/edit
+        // or specific method to path like: get:auth/users.
+        'except' => [
             'auth/login',
             'auth/logout',
-            '_handle_action_',
-        ]
+        ],
+
+    ],
+
+    'grid' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | The global Grid action display class.
+        |--------------------------------------------------------------------------
+        */
+        'grid_action_class' => Dcat\Admin\Grid\Displayers\DropdownActions::class,
     ],
 
     /*
-     * Laravel-Admin 文件上传设置
-     */
+    |--------------------------------------------------------------------------
+    | dcat-admin helpers setting.
+    |--------------------------------------------------------------------------
+    */
+    'helpers' => [
+        'enable' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | dcat-admin permission setting
+    |--------------------------------------------------------------------------
+    |
+    | Permission settings for all admin pages.
+    |
+    */
+    'permission' => [
+        // Whether enable permission.
+        'enable' => true,
+
+        // All method to path like: auth/users/*/edit
+        // or specific method to path like: get:auth/users.
+        'except' => [
+            '/',
+            'auth/login',
+            'auth/logout',
+            'auth/setting',
+        ],
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | dcat-admin menu setting
+    |--------------------------------------------------------------------------
+    |
+    */
+    'menu' => [
+        'cache' => [
+            // enable cache or not
+            'enable' => false,
+            'store'  => 'file',
+        ],
+
+        // Whether enable menu bind to a permission.
+        'bind_permission' => true,
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | dcat-admin upload setting
+    |--------------------------------------------------------------------------
+    |
+    | File system configuration for form upload files and images, including
+    | disk and upload path.
+    |
+    */
     'upload' => [
-        // 对应 filesystem.php 中的 disks
+
+        // Disk in `config/filesystem.php`.
         'disk' => 'public',
 
+        // Image and file upload path under the disk above.
         'directory' => [
             'image' => 'images',
             'file'  => 'files',
@@ -98,180 +231,149 @@ return [
     ],
 
     /*
-     * Laravel-Admin 数据库设置
-     */
+    |--------------------------------------------------------------------------
+    | dcat-admin database settings
+    |--------------------------------------------------------------------------
+    |
+    | Here are database settings for dcat-admin builtin model & tables.
+    |
+    */
     'database' => [
 
-        // 数据库连接名称，留空即可
+        // Database connection for following tables.
         'connection' => '',
 
-        // 管理员用户表及模型
+        // User tables and model.
         'users_table' => 'admin_users',
-        'users_model' => Encore\Admin\Auth\Database\Administrator::class,
+        'users_model' => Dcat\Admin\Models\Administrator::class,
 
-        // 角色表及模型
+        // Role table and model.
         'roles_table' => 'admin_roles',
-        'roles_model' => Encore\Admin\Auth\Database\Role::class,
+        'roles_model' => Dcat\Admin\Models\Role::class,
 
-        // 权限表及模型
+        // Permission table and model.
         'permissions_table' => 'admin_permissions',
-        'permissions_model' => Encore\Admin\Auth\Database\Permission::class,
+        'permissions_model' => Dcat\Admin\Models\Permission::class,
 
-        // 菜单表及模型
+        // Menu table and model.
         'menu_table' => 'admin_menu',
-        'menu_model' => Encore\Admin\Auth\Database\Menu::class,
+        'menu_model' => Dcat\Admin\Models\Menu::class,
 
-        // 多对多关联中间表
+        // Pivot table for table above.
         'operation_log_table'    => 'admin_operation_log',
-        'user_permissions_table' => 'admin_user_permissions',
         'role_users_table'       => 'admin_role_users',
         'role_permissions_table' => 'admin_role_permissions',
         'role_menu_table'        => 'admin_role_menu',
+        'permission_menu_table'  => 'admin_permission_menu',
     ],
 
     /*
-     * Laravel-Admin 操作日志设置
-     */
+    |--------------------------------------------------------------------------
+    | User operation log setting
+    |--------------------------------------------------------------------------
+    |
+    | By setting this option to open or close operation log in dcat-admin.
+    |
+    */
     'operation_log' => [
-        /*
-         * 只记录以下类型的请求
-         */
-        'allowed_methods' => ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'],
 
         'enable' => true,
 
-        /*
-         * 不记操作日志的路由
-         */
+        // Only logging allowed methods in the list
+        'allowed_methods' => ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'],
+
+        'secret_fields' => [
+            'password',
+            'password_confirmation',
+        ],
+
+        // Routes that will not log to database.
+        // All method to path like: auth/logs/*/edit
+        // or specific method to path like: get:auth/logs.
         'except' => [
-           'admin/auth/logs*',
+            'auth/logs*',
         ],
     ],
 
     /*
-    * 路由是否检查权限
+    |--------------------------------------------------------------------------
+    | Admin map field provider
+    |--------------------------------------------------------------------------
+    |
+    | Supported: "tencent", "google", "yandex", "baidu".
+    |
     */
-    'check_route_permission' => true,
+    'map' => [
+        'provider' => 'baidu',
+
+        'keys' => [
+            'tencent' => env('TENCENT_MAP_API_KEY'),
+            'google' => env('GOOGLE_API_KEY'),
+            'baidu' => env('BAIDU_MAP_API_KEY'),
+        ],
+    ],
 
     /*
-     * 菜单是否检查权限
+    |--------------------------------------------------------------------------
+    | Application layout
+    |--------------------------------------------------------------------------
+    |
+    | This value is the layout of admin pages.
     */
-    'check_menu_roles'       => true,
+    'layout' => [
+        // indigo, blue, blue-light, blue-dark, green
+        'color' => 'indigo',
+
+        'body_class' => '',
+
+        'sidebar_collapsed' => false,
+
+        // light, primary, dark
+        'sidebar_style' => 'light',
+
+        'dark_mode_switch' => false,
+
+        // bg-primary, bg-info, bg-warning, bg-success, bg-danger, bg-dark
+        'navbar_color' => '',
+    ],
 
     /*
-    * 管理员默认头像
+    |--------------------------------------------------------------------------
+    | The exception handler class
+    |--------------------------------------------------------------------------
+    |
     */
-    'default_avatar' => '/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg',
+    'exception_handler' => \Dcat\Admin\Exception\Handler::class,
 
     /*
-     * 地图组件提供商
-     */
-    'map_provider' => 'google',
-
-    /*
-     * 页面风格
-     * @see https://adminlte.io/docs/2.4/layout
-     */
-    'skin' => 'skin-blue-light',
-
-    /*
-     * 后台布局
-     */
-    'layout' => ['sidebar-mini', 'sidebar-collapse'],
-
-    /*
-     * 登录页背景图
-     */
-    'login_background_image' => '',
-
-    /*
-     * 显示版本
-     */
-    'show_version' => true,
-
-    /*
-     * 显示环境
-     */
-    'show_environment' => true,
-
-    /*
-     * 菜单绑定权限
-     */
-    'menu_bind_permission' => true,
-
-    /*
-     * 默认启用面包屑
-     */
+    |--------------------------------------------------------------------------
+    | Enable default breadcrumb
+    |--------------------------------------------------------------------------
+    |
+    | Whether enable default breadcrumb for every page content.
+    */
     'enable_default_breadcrumb' => true,
 
     /*
-    * 压缩资源文件
+    |--------------------------------------------------------------------------
+    | Extension Directory
+    |--------------------------------------------------------------------------
+    |
+    | When you use command `php artisan admin:extend` to generate extensions,
+    | the extension files will be generated in this directory.
     */
-    'minify_assets' => [
-        // 不需要被压缩的资源
-        'excepts' => [
-
-        ],
-    ],
-    /*
-    * 启用菜单搜索
-    */
-    'enable_menu_search' => true,
-    /*
-    * 顶部警告信息
-    */
-    'top_alert' => '',
-    /*
-    * 表格操作展示样式
-    */
-    'grid_action_class' => \Encore\Admin\Grid\Displayers\DropdownActions::class,
-    /*
-     * 扩展所在的目录.
-     */
     'extension_dir' => app_path('Admin/Extensions'),
 
     /*
-     * 扩展设置.
-     */
+    |--------------------------------------------------------------------------
+    | Settings for extensions.
+    |--------------------------------------------------------------------------
+    |
+    | You can find all available extensions here
+    | https://github.com/dcat-admin-extensions.
+    |
+    */
     'extensions' => [
-        // 新增编辑器配置开始
-        'quill' => [
-            // If the value is set to false, this extension will be disabled
-            'enable' => true,
-            'config' => [
-                'modules' => [
-                    'syntax' => true,
-                    'toolbar' =>
-                        [
-                            ['size' => []],
-                            ['header' => []],
-                            'bold',
-                            'italic',
-                            'underline',
-                            'strike',
-                            ['script' => 'super'],
-                            ['script' => 'sub'],
-                            ['color' => []],
-                            ['background' => []],
-                            'blockquote',
-                            'code-block',
-                            ['list' => 'ordered'],
-                            ['list' => 'bullet'],
-                            ['indent' => '-1'],
-                            ['indent' => '+1'],
-                            'direction',
-                            ['align' => []],
-                            'link',
-                            'image',
-                            'video',
-                            'formula',
-                            'clean'
-                        ],
-                ],
-                'theme' => 'snow',
-                'height' => '200px',
-            ]
-        ]
-        // 新增编辑器配置结束
-    ]
+
+    ],
 ];

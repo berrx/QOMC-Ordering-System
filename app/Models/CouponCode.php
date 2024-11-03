@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Encore\Admin\Traits\DefaultDatetimeFormat;
+// use Dcat\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Exceptions\CouponCodeUnavailableException;
@@ -12,7 +12,7 @@ use App\Models\User;
 
 class CouponCode extends Model
 {
-    use DefaultDatetimeFormat;
+    // use DefaultDatetimeFormat;
     use HasFactory;
 
     // 用常量的方式定义支持的优惠券类型

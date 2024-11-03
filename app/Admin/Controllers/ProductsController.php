@@ -3,10 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Product;
-use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Show;
+use Dcat\Admin\Controllers\AdminController;
+use Dcat\Admin\Form;
+use Dcat\Admin\Grid;
+use Dcat\Admin\Show;
 
 class ProductsController extends AdminController
 {
@@ -66,7 +66,7 @@ class ProductsController extends AdminController
         $form->image('image', '封面图片')->rules('required|image');
 
         // 创建一个富文本编辑器
-        $form->quill('description', '商品描述')->rules('required');
+        $form->editor('description', '商品描述')->rules('required');
 
         // 创建一组单选框
         $form->radio('on_sale', '上架')->options(['1' => '是', '0'=> '否'])->default('0');

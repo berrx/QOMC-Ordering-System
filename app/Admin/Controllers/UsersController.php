@@ -3,10 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Models\User;
-use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Show;
+use Dcat\Admin\Controllers\AdminController;
+use Dcat\Admin\Form;
+use Dcat\Admin\Grid;
+use Dcat\Admin\Show;
 
 class UsersController extends AdminController
 {

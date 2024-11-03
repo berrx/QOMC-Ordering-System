@@ -9,12 +9,11 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
-        "encore/laravel-admin": "1.8.11",
+        "dcat/laravel-admin": "^1.7",
         "endroid/qr-code": "^4.0",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "jxlwqq/quill": "1.0.2",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.0",

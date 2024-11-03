@@ -3,9 +3,9 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Order;
-use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
+use Dcat\Admin\Controllers\AdminController;
+use Dcat\Admin\Grid;
+use Dcat\Admin\Layout\Content;
 use Illuminate\Http\Request;
 use App\Exceptions\InvalidRequestException;
 use Illuminate\Foundation\Validation\ValidatesRequests;

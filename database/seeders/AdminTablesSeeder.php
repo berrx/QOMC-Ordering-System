@@ -15,8 +15,8 @@ class AdminTablesSeeder extends Seeder
     public function run()
     {
         // base tables
-        \Encore\Admin\Auth\Database\Menu::truncate();
-        \Encore\Admin\Auth\Database\Menu::insert(
+        \Dcat\Admin\Auth\Database\Menu::truncate();
+        \Dcat\Admin\Auth\Database\Menu::insert(
             [
                 [
                     "icon" => "fa-bar-chart",
@@ -109,8 +109,8 @@ class AdminTablesSeeder extends Seeder
             ]
         );
 
-        \Encore\Admin\Auth\Database\Permission::truncate();
-        \Encore\Admin\Auth\Database\Permission::insert(
+        \Dcat\Admin\Auth\Database\Permission::truncate();
+        \Dcat\Admin\Auth\Database\Permission::insert(
             [
                 [
                     "http_method" => "",
@@ -169,8 +169,8 @@ class AdminTablesSeeder extends Seeder
             ]
         );
 
-        \Encore\Admin\Auth\Database\Role::truncate();
-        \Encore\Admin\Auth\Database\Role::insert(
+        \Dcat\Admin\Auth\Database\Role::truncate();
+        \Dcat\Admin\Auth\Database\Role::insert(
             [
                 [
                     "name" => "Administrator",
