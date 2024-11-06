@@ -13,10 +13,103 @@ use App\Http\Requests\SendReviewRequest;
 use App\Events\OrderReviewed;
 use App\Http\Requests\ApplyRefundRequest;
 use App\Exceptions\CouponCodeUnavailableException;
+use App\Models\Cart;
 use App\Models\CouponCode;
+use App\Models\OrderItem;
+use App\Models\ProductSku;
 
 class OrdersController extends Controller
 {
+
+    public function pay(Request $request)
+    {
+        $userid = $request->userid;
+        $mealsTime = $request->mealsTime;
+        $people = $request->people;
+        $leave = $request->leave;
+        $pay_type = $request->pay_type;
+
+
+        if ($pay_type == "微信支付") {
+            $payment_method = 'wechat';
+        } else {
+            $payment_method = 'alipay';
+        }
+
+        $payment_no = date('YmdHis') . mt_rand(100, 999);
+
+        $cartItems = Cart::where('user_id', $request->userid)->with('product')->get();
+        $cartBody = [];
+        $totalPrice = 0;
+        $total = 0;
+        foreach ($cartItems as $key => $value) {
+            $cartBody[] = [
+                'name' => $value->product->title,
+                'price' => $value->product->price,
+                'desc' => $value->product->description,
+                'product_id' => $value->product->id,
+                'quantity' => $value->quantity,
+            ];
+            $totalPrice = bcadd($totalPrice, bcmul($value->quantity, $value->product->price));
+        }
+        // 开启事务
+        \DB::beginTransaction();
+        try {
+            // 创建订单
+            $order = Order::create([
+                'user_id' => $userid,
+                'address' => '店内就餐',
+                'total_amount' => $totalPrice,
+                'remark' => $people.' 人就餐|'.$leave,
+                'paid_at' => date('Y-m-d H:i:s'),
+                'payment_method' => $payment_method,
+                'payment_no' => $payment_no,
+                'refund_status' => 'pending',
+                'closed' => 0,
+                'reviewed' => 1,
+                'ship_status' => 'pending',
+                'extra' => '',
+                // 设置其他订单默认字段
+            ]);
+
+            foreach ($cartBody as $key => $value) {
+                $lowestPriceSku = ProductSku::where('product_id', $value['product_id'])
+                    ->orderBy('price', 'asc')
+                    ->first();
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $value['product_id'],
+                    'product_sku_id' => $lowestPriceSku->id,
+                    'amount' => $value['quantity'],
+                    'price' => $value['price'],
+                ]);
+            }
+            $deleted = Cart::where('user_id', $userid)->delete();
+            // 提交事务
+            \DB::commit();
+
+            return response()->json(['message' => 'Order created successfully'], 201);
+        } catch (\Exception $e) {
+            // 回滚事务
+            \DB::rollback();
+            return response()->json(['error' => 'Order creation failed', 'message' => $e->getMessage()], 500);
+        }
+        /*
+
+FieldTypeComment
+idbigint unsigned NOT NULL
+order_idbigint unsigned NOT NULL
+product_idbigint unsigned NOT NULL
+product_sku_idbigint unsigned NOT NULL
+amountint unsigned NOT NULL
+pricedecimal(10,2) NOT NULL
+ratingint unsigned NULL
+reviewtext NULL
+reviewed_attimestamp NULL
+*/
+    }
+
     public function store(OrderRequest $request, OrderService $orderService)
     {
         $user    = $request->user();

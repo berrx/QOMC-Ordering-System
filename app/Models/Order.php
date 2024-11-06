@@ -29,9 +29,9 @@ class Order extends Model
     ];
 
     public static $shipStatusMap = [
-        self::SHIP_STATUS_PENDING   => '未发货',
-        self::SHIP_STATUS_DELIVERED => '已发货',
-        self::SHIP_STATUS_RECEIVED  => '已收货',
+        self::SHIP_STATUS_PENDING   => '制作中',
+        self::SHIP_STATUS_DELIVERED => '制作完成',
+        self::SHIP_STATUS_RECEIVED  => '订单结束',
     ];
 
     protected $fillable = [
@@ -40,6 +40,7 @@ class Order extends Model
         'total_amount',
         'remark',
         'paid_at',
+        'user_id',
         'payment_method',
         'payment_no',
         'refund_status',

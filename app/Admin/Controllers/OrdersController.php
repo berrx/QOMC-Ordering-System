@@ -11,6 +11,7 @@ use App\Exceptions\InvalidRequestException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\Http\Requests\Admin\HandleRefundRequest;
 use App\Exceptions\InternalException;
+use App\Models\Product;
 
 class OrdersController extends AdminController
 {
@@ -24,16 +25,32 @@ class OrdersController extends AdminController
 
         // 只展示已支付的订单，并且默认按支付时间倒序排序
         $grid->model()->whereNotNull('paid_at')->orderBy('paid_at', 'desc');
-
-        $grid->no('订单流水号');
+        $grid->model()->with('user');
+        $grid->model()->with('items');
+        $grid->model()->with('items.product');
+        $grid->id('流水号');
         // 展示关联关系的字段时，使用 column 方法
         $grid->column('user.name', '买家');
         $grid->total_amount('总金额')->sortable();
-        $grid->paid_at('支付时间')->sortable();
-        $grid->ship_status('物流')->display(function($value) {
+        $grid->paid_at('支付时间')->display(function ($value) {
+            return \Carbon\Carbon::parse($value)->timezone('Asia/Shanghai')->format('Y-m-d H:i:s');
+        })->sortable();
+        $grid->ship_status('物流')->display(function ($value) {
             return Order::$shipStatusMap[$value];
         });
-        $grid->refund_status('退款状态')->display(function($value) {
+        $grid->column('items', '商品信息')->display(function ($orderItems) {
+            return collect($orderItems)->map(function ($item) {
+
+                $product = Product::find($item['product_id']);
+
+                // 访问关联的 product 信息
+                $productName = $product->title ?? '无';
+                $amount = $item['amount'];
+
+                return "商品名称: {$productName} - 数量: {$amount}";
+            })->implode('<br>');
+        });
+        $grid->refund_status('退款状态')->display(function ($value) {
             return Order::$refundStatusMap[$value];
         });
         // 禁用创建按钮，后台不需要创建订单
@@ -42,12 +59,63 @@ class OrdersController extends AdminController
             // 禁用删除和编辑按钮
             $actions->disableDelete();
             $actions->disableEdit();
+
+            // 在右侧操作栏中添加按钮
+            $actions->append('<a href="javascript:void(0);" onclick="updateOrderStatus(' . $actions->getKey() . ')">
+                <i class="fa fa-refresh"></i> 制作完成
+            </a>');
         });
         $grid->tools(function ($tools) {
             // 禁用批量删除按钮
             $tools->batch(function ($batch) {
                 $batch->disableDelete();
             });
+            $tools->append('<script>
+                // 声明定时器变量
+                var refreshInterval1;
+
+                function startPolling() {
+                    // 先清除已存在的定时器
+                    if (refreshInterval1) {
+                        clearInterval(refreshInterval1);
+                    }
+            
+                    // 创建新的定时器
+                    refreshInterval1 = setInterval(function() {
+                        Dcat.reload();
+                    }, 5000); // 每5秒刷新一次
+                }
+            
+                // 页面加载后启动轮询
+                document.addEventListener("DOMContentLoaded", startPolling);
+
+
+                function updateOrderStatus(orderId) {
+                    // 发起 AJAX 请求
+                    $.ajax({
+                        url: "/admin/orders/"+orderId+"/ship",  // 发送请求的 URL
+                        type: "POST",
+                        data: {
+                            express_company: "默认",
+                            express_no: "0",
+                            isRedirect: "0"
+                        },
+                        success: function (response) {
+                            // 请求成功后的操作
+                            if (response.code === 200) {
+                                Dcat.success(response.message);  // 显示成功信息
+                                Dcat.reload();  // 刷新页面
+                            } else {
+                                Dcat.error(response.message);  // 显示错误信息
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            // 请求失败时的操作
+                            Dcat.error("请求失败，请稍后再试。");
+                        }
+                    });
+                }
+            </script>');
         });
 
         return $grid;
@@ -86,9 +154,13 @@ class OrdersController extends AdminController
             // 因此这里可以直接把数组传过去
             'ship_data'   => $data,
         ]);
-
+        $isRedirect = $request->isRedirect ?? 1;
         // 返回上一页
-        return redirect()->back();
+        if ($isRedirect) {
+            return redirect()->back();
+        } else {
+            return response()->json(['message' => 'Order update successfully', 'code' => 200], 200);
+        }
     }
 
     public function handleRefund(Order $order, HandleRefundRequest $request)
@@ -169,7 +241,7 @@ class OrdersController extends AdminController
                 break;
             default:
                 // 原则上不可能出现，这个只是为了代码健壮性
-                throw new InternalException('未知订单支付方式：'.$order->payment_method);
+                throw new InternalException('未知订单支付方式：' . $order->payment_method);
                 break;
         }
     }

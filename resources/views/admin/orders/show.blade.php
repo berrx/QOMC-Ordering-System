@@ -24,7 +24,7 @@
       </tr>
       <tr>
         <td>收货地址</td>
-        <td colspan="3">{{ $order->address['address'] }} {{ $order->address['zip'] }} {{ $order->address['contact_name'] }} {{ $order->address['contact_phone'] }}</td>
+        <td colspan="3">{{ $order->address }}</td>
       </tr>
       <tr>
         <td rowspan="{{ $order->items->count() + 1 }}">商品列表</td>
@@ -34,7 +34,7 @@
       </tr>
       @foreach($order->items as $item)
       <tr>
-        <td>{{ $item->product->title }} {{ $item->productSku->title }}</td>
+        <td>{{ $item->product->title }} </td>
         <td>￥{{ $item->price }}</td>
         <td>{{ $item->amount }}</td>
       </tr>
@@ -56,8 +56,8 @@
               <!-- 别忘了 csrf token 字段 -->
               {{ csrf_field() }}
               <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}">
-                <label for="express_company" class="control-label">物流公司</label>
-                <input type="text" id="express_company" name="express_company" value="" class="form-control" placeholder="输入物流公司">
+                <label for="express_company" class="control-label">备注</label>
+                <input type="text" id="express_company" name="express_company" value="备注" class="form-control" placeholder="输入备注">
                 @if($errors->has('express_company'))
                   @foreach($errors->get('express_company') as $msg)
                     <span class="help-block">{{ $msg }}</span>
@@ -65,8 +65,8 @@
                 @endif
               </div>
               <div class="form-group {{ $errors->has('express_no') ? 'has-error' : '' }}">
-                <label for="express_no" class="control-label">物流单号</label>
-                <input type="text" id="express_no" name="express_no" value="" class="form-control" placeholder="输入物流单号">
+                <label for="express_no" class="control-label">修改输入窗口号</label>
+                <input type="text" id="express_no" name="express_no" value="窗口号" class="form-control" placeholder="输入窗口号">
                 @if($errors->has('express_no'))
                   @foreach($errors->get('express_no') as $msg)
                     <span class="help-block">{{ $msg }}</span>
@@ -81,10 +81,10 @@
       @else
       <!-- 否则展示物流公司和物流单号 -->
       <tr>
-        <td>物流公司：</td>
-        <td>{{ $order->ship_data['express_company'] }}</td>
-        <td>物流单号：</td>
-        <td>{{ $order->ship_data['express_no'] }}</td>
+        <td>备注：</td>
+        <td>{{ $order->ship_data['express_company'] ?? '备注' }}</td>
+        <td>输入窗口号</td>
+        <td>{{ $order->ship_data['express_no'] ?? '1' }}</td>
       </tr>
       @endif
       <!-- 订单发货结束 -->

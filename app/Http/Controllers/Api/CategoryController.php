@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -13,22 +14,30 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::with('products')->get(); // 修改为 products
+        $userid = $request->userid;
 
         $result = $categories->map(function ($category) {
             return [
                 'name' => $category->name,
                 'image' => \Storage::disk('public')->url($category->icon), // 假设你想用icon作为category的image
                 'foods' => $category->products->map(function ($product) { // 修改为 products
+
+                    $cartItems = Cart::where('user_id', request('userid'))->where('product_id', $product->id)->first();
+                    if (!empty($cartItems)) {
+                        $quantity = $cartItems->quantity;
+                    } else {
+                        $quantity = 0;
+                    }
                     return [
                         'id' => $product->id,
                         'icon' => \Storage::disk('public')->url($product->image),
                         'name' => $product->title,
                         'desc' => $product->description,
                         'price' => $product->price,
-                        'value' => 0 // 初始值
+                        'value' => $quantity // 初始值
                     ];
                 })
             ];
