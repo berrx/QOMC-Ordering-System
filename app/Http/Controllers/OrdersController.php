@@ -60,7 +60,7 @@ class OrdersController extends Controller
                 'user_id' => $userid,
                 'address' => '店内就餐',
                 'total_amount' => $totalPrice,
-                'remark' => $people.' 人就餐|'.$leave,
+                'remark' => $people . ' 人就餐|' . $leave,
                 'paid_at' => date('Y-m-d H:i:s'),
                 'payment_method' => $payment_method,
                 'payment_no' => $payment_no,
@@ -89,7 +89,7 @@ class OrdersController extends Controller
             // 提交事务
             \DB::commit();
 
-            return response()->json(['message' => 'Order created successfully'], 201);
+            return response()->json(['message' => 'Order created successfully', 'order_id' => $order->id], 201);
         } catch (\Exception $e) {
             // 回滚事务
             \DB::rollback();
@@ -129,20 +129,49 @@ reviewed_attimestamp NULL
 
     public function index(Request $request)
     {
-        $orders = Order::query()
-            // 使用 with 方法预加载，避免N + 1问题
-            ->with(['items.product', 'items.productSku'])
-            ->where('user_id', $request->user()->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate();
+        $orders = Order::where('user_id', $request->userid)->with('items.product')->get();
+        // 为每个订单项的产品图片添加完整链接
 
-        return view('orders.index', ['orders' => $orders]);
+        foreach ($orders as $order) {
+            $order->count = count($order->items);
+
+            foreach ($order->items as $item) {
+                $product = $item->product;
+
+                // 判断 product 的 image 是否已经是完整的 URL
+                if (filter_var($product->image, FILTER_VALIDATE_URL)) {
+                    // 如果是完整的 URL，直接使用
+                    $item->product->image = $product->image;
+                } else {
+                    // 如果是相对路径，拼接完整的 URL
+                    $item->product->image = asset('storage/' . $product->image);
+                }
+            }
+        }
+
+        return response()->json($orders);
     }
 
-    public function show(Order $order, Request $request)
+    public function show($id)
     {
-        $this->authorize('own', $order);
-        return view('orders.show', ['order' => $order->load(['items.productSku', 'items.product'])]);
+        $order = Order::with('items.product')->find($id); // 关联 orderItems 和 product 信息
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        $order->items->each(function ($item) {
+            if ($item->product && $item->product->image) {
+                $item->product->image = \Storage::disk('public')->url($item->product->image); // 使用 Laravel 的 url() 函数
+            }
+        });
+
+        $order->pay_time = Carbon::parse($order->paid_at)
+            ->setTimezone('Asia/Shanghai') // 设置为东八区
+            ->format('Y-m-d H:i:s');
+
+        $order->count = count($order->items);
+        return response()->json($order);
     }
 
     public function received(Order $order, Request $request)

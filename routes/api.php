@@ -26,6 +26,8 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/users', [UserController::class, 'create']);
 Route::post('/pay', [OrdersController::class, 'pay']);
+Route::get('/orders/{id}', [OrdersController::class, 'show']);
+Route::get('/orders', [OrdersController::class, 'index']);
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 

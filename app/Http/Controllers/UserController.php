@@ -14,7 +14,7 @@ class UserController extends Controller
         // 验证请求数据
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
 
