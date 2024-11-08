@@ -27,13 +27,8 @@ class ProductSkuController extends AdminController
             // $grid->column('created_at');
             // $grid->column('updated_at')->sortable();
             // 定义库存列并使用 display 方法
+            $grid->column('stock', '库存')->setAttributes(['background-color' => '#ffe5e5']);
 
-            dd($grid->stock);
-            if($grid->stock < 20){
-                $grid->column('stock', '库存')->setAttributes(['background-color' => '#ffe5e5']);
-            }else{
-                $grid->column('stock', '库存');
-            }
 
 
 
