@@ -31,12 +31,12 @@ class ProductSkuController extends AdminController
                 // 判断库存是否小于 20
                 if ($value < 20) {
                     // 返回带有背景色样式的值
-                    return "<span style='background-color: #ffe5e5; display: block;'>{$value}</span>";
+                    $value->setAttributes(['background-color' => '#ffe5e5']);
                 }
 
                 // 如果库存不小于 20，直接返回原始值
                 return $value;
-            })->sortable();
+            });
 
 
 
