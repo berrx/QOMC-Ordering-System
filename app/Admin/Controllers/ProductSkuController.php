@@ -42,13 +42,13 @@ class ProductSkuController extends AdminController
 
             // 使用 rows() 方法设置行背景色
             $grid->rows(function ($row) {
-                // 直接访问 $row['stock'] 获取库存值
-                if ($row['stock'] < 20) {
+                // 使用 $row->get('stock') 获取库存值
+                if ($row->get('stock') < 20) {
                     // 设置整行背景色为浅红色
                     $row->setAttributes(['style' => 'background-color:#ffe5e5;']);
                 }
             });
-            
+
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
             });
