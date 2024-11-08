@@ -40,15 +40,15 @@ class ProductSkuController extends AdminController
             // });
 
 
-            // 设置行的回调，调整行的背景色
+            // 使用 rows() 方法设置行背景色
             $grid->rows(function ($row) {
-                // 判断 stock 值是否小于 20
-                if ($row->column('stock') < 20) {
+                // 直接访问 $row['stock'] 获取库存值
+                if ($row['stock'] < 20) {
                     // 设置整行背景色为浅红色
                     $row->setAttributes(['style' => 'background-color:#ffe5e5;']);
                 }
             });
-
+            
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
             });
