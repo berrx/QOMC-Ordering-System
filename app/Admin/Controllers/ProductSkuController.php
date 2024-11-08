@@ -27,15 +27,11 @@ class ProductSkuController extends AdminController
             // $grid->column('created_at');
             // $grid->column('updated_at')->sortable();
 
-            // 设置行回调，检查 stock 值
-            $grid->rowCallback(function ($row) {
-                // 判断 stock 是否小于 20
-                if ($row->stock < 20) {
-                    // 设置行的背景色为浅红色
-                    $row->setAttributes(['style' => 'background-color:#ffe5e5;']);
-                }
-            });
 
+            if ($grid->stock < 20) {
+                // 设置行的背景色为浅红色
+                $grid->setAttributes(['style' => 'background-color:#ffe5e5;']);
+            }
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
             });
