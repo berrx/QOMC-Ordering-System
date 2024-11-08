@@ -37,6 +37,7 @@ class CategoryController extends Controller
                         'name' => $product->title,
                         'desc' => $product->description,
                         'price' => $product->price,
+                        'price' => $product->recommend,
                         'value' => $quantity // 初始值
                     ];
                 })
