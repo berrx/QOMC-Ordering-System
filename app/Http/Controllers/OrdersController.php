@@ -84,10 +84,10 @@ class OrdersController extends Controller
                 // 检查库存是否足够
                 if ($lowestPriceSku->stock <= 0) {
                     // 库存为零，抛出错误
-                    throw new Exception('库存不足');
+                    throw new Exception($lowestPriceSku->title . '库存不足');
                 } elseif ($lowestPriceSku->stock < $value['quantity']) {
                     // 库存不足以满足减少需求
-                    throw new Exception('库存不足');
+                    throw new Exception($lowestPriceSku->title . '库存不足');
                 }
 
                 // 减库存
