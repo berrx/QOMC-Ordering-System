@@ -31,6 +31,7 @@ Route::group([
     $router->get('category/{id}/edit', 'CategoryController@edit');
     $router->get('category', 'CategoryController@index');
     $router->post('category', 'CategoryController@store');
+    $router->put('products/{id}', 'ProductsController@update');
 
     $router->get('category/create', 'CategoryController@create');
     $router->get('product_sku', 'ProductSkuController@index');
