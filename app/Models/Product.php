@@ -19,7 +19,8 @@ class Product extends Model
         'sold_count',
         'review_count',
         'price',
-        'cate_id'
+        'cate_id',
+        'recommend'
     ];
     protected $casts = [
         'on_sale' => 'boolean', // on_sale 是一个布尔类型的字段

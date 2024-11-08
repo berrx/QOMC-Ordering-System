@@ -34,6 +34,9 @@ class ProductsController extends AdminController
             $grid->on_sale('已上架')->display(function ($value) {
                 return $value ? '是' : '否';
             });
+            $grid->recommend('是否推荐')->display(function ($value) {
+                return $value ? '是' : '否';
+            });
             $grid->price('价格');
             $grid->column('category.name', '分类');
             $grid->rating('评分');
@@ -72,6 +75,9 @@ class ProductsController extends AdminController
 
             // 创建一组单选框
             $form->radio('on_sale', '上架')->options(['1' => '是', '0' => '否'])->default('0');
+
+            // 创建一组单选框
+            $form->radio('recommend', '是否推荐')->options(['1' => '是', '0' => '否'])->default('0');
 
             // 分类
             $form->select('cate_id', '类目')->options(function ($id) {

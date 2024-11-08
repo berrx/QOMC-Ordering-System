@@ -30,7 +30,7 @@ class ProductSkuController extends AdminController
             $grid->column('stock', '库存')->display(function ($value) {
                 // 判断库存小于 20 时，改变背景色为浅红色
                 if ($value < 20) {
-                    return "<span style='background-color: #ed9898; display: block;padding:10px;border-radius:15px'>{$value} 库存少于20,请及时补充</span>";
+                    return "<span style='background-color: #ed9898; display: block;padding:10px;border-radius:15px'>( {$value} )库存少于20,请及时补充</span>";
                 }
 
                 return $value;
@@ -39,9 +39,7 @@ class ProductSkuController extends AdminController
             $grid->model()->orderBy('stock', 'asc');
 
 
-            $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
-            });
+ 
         });
     }
 
