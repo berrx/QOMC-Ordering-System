@@ -18,7 +18,7 @@ class CategoryController extends Controller
     {
         $categories = Category::with(['products' => function ($query) {
             // 按照 is_recommended 字段降序排序，推荐的产品排在前面
-            $query->orderByDesc('is_recommended');
+            $query->orderByDesc('recommend');
         }])->get(); // 修改为 products
         $userid = $request->userid;
 
