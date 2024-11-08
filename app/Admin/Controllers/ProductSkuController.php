@@ -26,7 +26,6 @@ class ProductSkuController extends AdminController
             // $grid->column('stock', '库存');
             // $grid->column('created_at');
             // $grid->column('updated_at')->sortable();
-
             // 定义库存列并使用 display 方法
             $grid->column('stock', '库存')->display(function ($value) {
                 // 判断库存是否小于 20
@@ -37,7 +36,7 @@ class ProductSkuController extends AdminController
 
                 // 如果库存不小于 20，直接返回原始值
                 return $value;
-            });
+            })->sortable();
 
 
 
