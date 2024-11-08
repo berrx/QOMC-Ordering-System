@@ -23,20 +23,30 @@ class ProductSkuController extends AdminController
             $grid->column('description', '介绍');
             $grid->column('price', '价格');
             // $grid->column('product_id');
-            // $grid->column('stock', '库存');
+            $grid->column('stock', '库存');
             // $grid->column('created_at');
             // $grid->column('updated_at')->sortable();
 
             // 定义库存列并使用 display 方法
-            $grid->column('stock', '库存')->display(function ($value) {
-                // 判断库存是否小于 20
-                if ($value < 20) {
-                    // 返回带有背景色样式的值
-                    return "<span style='background-color: #ffe5e5; display: block;'>{$value}</span>";
-                }
+            // $grid->column('stock', '库存')->display(function ($value) {
+            //     // 判断库存是否小于 20
+            //     if ($value < 20) {
+            //         // 返回带有背景色样式的值
+            //         return "<span style='background-color: #ffe5e5; display: block;'>{$value}</span>";
+            //     }
 
-                // 如果库存不小于 20，直接返回原始值
-                return $value;
+            //     // 如果库存不小于 20，直接返回原始值
+            //     return $value;
+            // });
+
+
+            // 设置行的回调，调整行的背景色
+            $grid->rows(function ($row) {
+                // 判断 stock 值是否小于 20
+                if ($row->column('stock') < 20) {
+                    // 设置整行背景色为浅红色
+                    $row->setAttributes(['style' => 'background-color:#ffe5e5;']);
+                }
             });
 
             $grid->filter(function (Grid\Filter $filter) {
