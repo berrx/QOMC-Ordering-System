@@ -16,7 +16,10 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $categories = Category::with('products')->get(); // 修改为 products
+        $categories = Category::with(['products' => function ($query) {
+            // 按照 is_recommended 字段降序排序，推荐的产品排在前面
+            $query->orderByDesc('is_recommended');
+        }])->get(); // 修改为 products
         $userid = $request->userid;
 
         $result = $categories->map(function ($category) {
