@@ -17,6 +17,7 @@ use App\Models\Cart;
 use App\Models\CouponCode;
 use App\Models\OrderItem;
 use App\Models\ProductSku;
+use Exception;
 
 class OrdersController extends Controller
 {
@@ -76,6 +77,22 @@ class OrdersController extends Controller
                 $lowestPriceSku = ProductSku::where('product_id', $value['product_id'])
                     ->orderBy('price', 'asc')
                     ->first();
+
+
+                // 查找指定 SKU
+
+                // 检查库存是否足够
+                if ($lowestPriceSku->stock <= 0) {
+                    // 库存为零，抛出错误
+                    throw new Exception('库存不足');
+                } elseif ($lowestPriceSku->stock < $value['quantity']) {
+                    // 库存不足以满足减少需求
+                    throw new Exception('库存不足');
+                }
+
+                // 减库存
+                $lowestPriceSku->stock -= $value['quantity'];
+                $lowestPriceSku->save();
 
                 OrderItem::create([
                     'order_id' => $order->id,
